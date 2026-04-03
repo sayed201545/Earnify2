@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Earnify - Earn Coins</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+      (function() {
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
+        if (tg) {
+          try {
+            const version = tg.version ? parseFloat(tg.version) : 0;
+            if (version < 6.9) {
+              const storageMock = {
+                setItem: function(k, v, c) { try { localStorage.setItem(k, v); if(c) c(null, true); } catch(e) { if(c) c(e, false); } },
+                getItem: function(k, c) { try { const v = localStorage.getItem(k); if(c) c(null, v); } catch(e) { if(c) c(e, null); } },
+                getItems: function(ks, c) { try { const r = {}; ks.forEach(k => r[k] = localStorage.getItem(k)); if(c) c(null, r); } catch(e) { if(c) c(e, null); } },
+                removeItem: function(k, c) { try { localStorage.removeItem(k); if(c) c(null, true); } catch(e) { if(c) c(e, false); } },
+                removeItems: function(ks, c) { try { ks.forEach(k => localStorage.removeItem(k)); if(c) c(null, true); } catch(e) { if(c) c(e, false); } },
+                getKeys: function(c) { try { const ks = Object.keys(localStorage); if(c) c(null, ks); } catch(e) { if(c) c(e, null); } }
+              };
+              try {
+                // Use defineProperty without checking value to avoid triggering SDK warning
+                Object.defineProperty(tg, 'CloudStorage', {
+                  value: storageMock,
+                  writable: true,
+                  configurable: true,
+                  enumerable: true
+                });
+              } catch (e) {
+                // Fallback for older environments
+                try { tg.CloudStorage = storageMock; } catch(e2) {}
+              }
+            }
+          } catch (e) {
+            console.error("CloudStorage fallback error:", e);
+          }
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
